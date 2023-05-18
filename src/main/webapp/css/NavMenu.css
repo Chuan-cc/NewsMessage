@@ -1,0 +1,96 @@
+::-webkit-scrollbar {
+    width: 0px;
+    position: absolute;
+}
+
+
+
+
+html{
+    font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+}
+
+#navMenu{
+    height: 75px;
+    width: 100%;
+    background-color: rgba(255,255,255,0.4);
+    backdrop-filter: blur(6px);
+    position: fixed;
+}
+
+#logo{
+    float: left;
+    padding-left: 30px;
+    padding-right: 30px;
+    border-right:1px solid #939393;
+    height: 75px;
+}
+
+
+/*搜索框*/
+#glass{
+    float: right;
+    padding-left: 30px;
+    padding-right: 27px;
+    border-left:1px solid #939393;
+    height: 75px;
+    width: 55px;
+    transition: width 0.5s;
+    transition-timing-function:ease;
+}
+#searchGlass{
+    height:45px;
+    position: relative;
+    top:13px;
+    transition: 0.5s;
+}
+#search{
+    height: 27px;
+    width: 0;
+    transition: 0.5s;
+    transition-timing-function:ease;
+    position: relative;
+    top:3px;
+    border: 0;
+    background-color: rgba(0,0,0,0);
+    outline: none;
+    z-index: -1;
+}
+
+/*#glass:hover>#search{*/
+/*    width: 150px;*/
+/*    z-index: auto;*/
+/*    background-color: rgba(255,255,255,0.3);*/
+/*    border: 1px solid #cccccc;*/
+/*}*/
+/*#glass:hover>#searchGlass{*/
+/*    height: 0;*/
+/*    z-index: -1;*/
+/*    transition: 0.5s;*/
+/*}*/
+/*#glass:hover{*/
+/*    width: 162px;*/
+/*}*/
+
+/*搜索框*/
+
+/*菜单项样式*/
+a{
+    text-decoration: none;
+}
+.menuItem{
+    font-weight: bold;
+    color: #222;
+    font-size: 17px;
+    position: relative;
+    top:3px;
+
+}
+
+.menuItem:hover{
+    border-bottom: 2px solid red;
+    padding-bottom: 3px;
+    color:red;
+
+}
+/*菜单项*/

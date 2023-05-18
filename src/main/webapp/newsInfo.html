@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" width="100%">
+<head>
+    <meta charset="UTF-8">
+    <title>NewsMessage</title>
+    <link rel="shortcut icon" href="img/icon.ico"/>
+    <link rel="stylesheet" href="css/NavMenu.css">
+    <style>
+        .el-header, .el-footer {
+            text-align: center;
+            line-height: 60px;
+        }
+
+        .el-aside {
+            background-color: #D3DCE6;
+            color: #333;
+            text-align: center;
+            line-height: 200px;
+        }
+
+        .el-main {
+            background-color: #E9EEF3;
+            color: #333;
+            text-align: center;
+            line-height: 30px;
+        }
+
+        body > .el-container {
+            margin-bottom: 40px;
+        }
+
+        .el-container:nth-child(5) .el-aside,
+        .el-container:nth-child(6) .el-aside {
+            line-height: 260px;
+        }
+
+        .el-container:nth-child(7) .el-aside {
+            line-height: 320px;
+        }
+
+        el-menu {
+            height: 75px;
+        }
+
+        .revise {
+            border: 1px solid rgb(204, 204, 204);
+            background-color: rgb(255, 255, 255);
+            height: 38px;
+            width: 50px;
+            transition: border 0.5s;
+        }
+
+        .revise:hover {
+            border: 1px solid black;
+        }
+
+        .revise:active {
+            background-color: rgb(204, 204, 204);
+        }
+
+        table {
+            border-spacing: 15px 8px;
+        }
+        li{
+            list-style-type: none;
+        }
+    </style>
+</head>
+<body style="margin: 0px">
+
+<div id="newsInfo">
+
+    <el-container>
+        <!--        header容器-->
+        <el-header height="75px" style="padding:0px;">
+            <!--            这里是导航栏-->
+            <div id="navMenu">
+                <span id="logo">
+                    <a href="index.html"><img src="img/Logo.png" height="75px"></a>
+                </span>
+                <span style="float: left; height: 75px ; width: 100px;">
+                    <a class="menuItem" href="index.html">首页</a>
+                </span>
+                <span style="float: left; height: 75px ; width: 100px;">
+                    <a class="menuItem" href="#" v-on:click="commentInfoCheck=true">我的发布</a>
+                </span>
+                <span style="float: left; height: 75px ; width: 100px;">
+                    <a class="menuItem" href="#" v-on:click="commentInfo">我的评论</a>
+                </span>
+                <!--                搜索框-->
+
+                <span id="glass" onmouseover="glassMover(this)" onmouseout="glassMout(this)">
+                    <img id="searchGlass" src="img/glass.svg">
+                    <input id="search" type="text" placeholder="请输入想查询的内容" onfocus="searchOf(this)"
+                           onblur="searchOb(this)">
+                </span>
+                <!--                登录-->
+                <span style="display:flex; float:right; height: 75px ; width: 100px; margin-right: 20px">
+                    <a class="menuItem" id="login" href="newsInfo.html" style="height: 40px">{{userShowName}}</a>
+                    <el-popover
+                            placement="bottom"
+                            title="提示"
+                            width="150"
+                            trigger="hover"
+                            content="双击退出">
+
+                    <button v-on:dblclick="exits"  slot="reference" style="text-decoration: underline;font-size: 12px;position: relative;top:4px;left: 8px;color: black;background-color: rgba(255,255,255,0);outline: none;border: none;height: 13px;width: 30px;padding: 0">退出</button>
+                            </el-popover>
+                </span>
+            </div>
+        </el-header>
+        <el-main>
+            <el-collapse accordion style="margin-left: 100px;margin-right:100px;" v-if="commentInfoCheck">
+                <el-collapse-item v-for="(new1,index) in newsInfo">
+                    <template slot="title">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        {{new1.title}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{new1.publish_date}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{new1.type}}
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{new1.liked}}喜欢
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                        <el-button slot="reference" v-on:click="deleted(index)">删除</el-button>
+                    </template>
+                    <div>{{new1.context}}</div>
+                </el-collapse-item>
+            </el-collapse>
+            <template v-if="!commentInfoCheck" >
+                <table style="position: relative;left: 24%">
+                    <tr v-for="(comments,index) in commentsInfo" style="margin-bottom: 10px;">
+                        <td style="margin-right: 15px;">
+                            <button v-on:click="indexNews(index)" style="height: 50px; outline: none;border: none;padding-left:20px;padding-right:20px"><li>{{comments.time}}   评价   {{comments.news_title}}   说   {{comments.com}}</li></button>
+
+                        </td>
+                        <td>
+                            <el-button slot="reference" v-on:click="commentDeleted(index)">删除</el-button>
+                        </td>
+                    </tr>
+                </table>
+            </template>
+        </el-main>
+        <el-footer style="background-color: rgb(67, 76, 122);">
+            <span style="font-size: 20px;font-weight: bold;color:white;">NewsMessage</span>
+        </el-footer>
+    </el-container>
+    <el-drawer
+            v-bind:title="drawerTitle"
+            :visible.sync="drawer"
+            :direction="direction"
+            style="backdrop-filter: blur(7px);"
+            size="50%">
+
+        <span style="margin-left: 40px">{{context}}</span><br><br>
+    </el-drawer>
+</div>
+
+<script src="js/vue.js"></script>
+<script src="element-ui/lib/index.js"></script>
+<link rel="stylesheet" type="text/css" href="element-ui/lib/theme-chalk/index.css"/>
+<script src="js/axios-0.18.0.js"></script>
+<!--搜索栏 -->
+<script>
+
+    let GLASS = document.getElementById("glass");
+    let SEARCH_GLASS = document.getElementById("searchGlass");
+    let SEARCH = document.getElementById("search");
+
+    //鼠标悬停事件
+    function glassMover(obj) {
+        document.getElementById('search').focus();
+
+        obj.style = "width: 162px;"
+        SEARCH_GLASS.style = "height: 0;\n" +
+            "    z-index: -1;\n";
+
+        SEARCH.style = "width: 150px;\n" +
+            "    z-index: auto;\n" +
+            "    background-color: rgba(255,255,255,0.3);\n" +
+            "    border: 1px solid #cccccc;";
+    }
+
+    function glassMout(obj) {
+        if (SEARCH.onmouseover) {
+            searchOb(obj);
+        }
+    }
+
+
+    //焦点事件
+    function searchOf(obj) {
+        obj.style = "width: 150px;" +
+            "    z-index: auto;" +
+            "    background-color: rgba(255,255,255,0.3);" +
+            "    border: 1px solid #cccccc;"
+        GLASS.style = "width: 162px;";
+        let searchGlassOf = document.getElementById("searchGlass");
+        searchGlassOf.style = "height: 0;" +
+            "    z-index: -1;";
+    }
+
+    function searchOb(obj) {
+        let glassOb = document.getElementById("glass");
+        let searchGlassOb = document.getElementById("searchGlass");
+        obj.style = "width:0px;" +
+            "z-index:-1;" +
+            "background-color:rgba(0,0,0,0);" +
+            "border:0;";
+        searchGlassOb.style = "height:45px;" +
+            "z-index:auto;";
+        glassOb.style = "width: 55px;";
+    }
+</script>
+
+<script>
+    const vm = new Vue({
+        el: "#newsInfo",
+        data: {
+            // news: [],
+            userShowName: "登录",
+            visible: false,
+            newsInfo: [],
+            commentsInfo:[],
+            commentInfoCheck:true,
+            drawerTitle:"",
+            drawer:false,
+            direction:"btt",
+            context:""
+        }, methods: {
+            indexNews(index){
+                let _this=this;
+                let temp=this.commentsInfo[index].news_id;
+                axios.get("/news/"+temp).then(function (resp){
+                    _this.drawerTitle=resp.data.title;
+                    _this.context=resp.data.context;
+                    _this.drawer=true;
+                })
+            },
+            deleted(index) {
+                let _this = this;
+                axios.delete("news/" + this.newsInfo[index].news_id).then(function (resp) {
+                    _this.openNoticeSuccess();
+                    _this.newsInfo.splice(index,1);
+                })
+
+            }, openNoticeSuccess() {
+                const h = this.$createElement;
+
+                this.$notify({
+                    title: '通知',
+                    message: h('i', {style: 'color: teal'}, '您已删除一条发布')
+                });
+            },exits(){
+                var cookies = document.cookie.split(";");
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookieName = cookies[i].split("=")[0];
+                    document.cookie = cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                }
+                open("login.html","_self")
+            },commentInfo(){
+                this.commentInfoCheck=false;
+            },commentDeleted(index){
+                let _this=this;
+                axios.delete("/comments/"+this.commentsInfo[index].id).then(function (resp){
+                    _this.deleteSuccess();
+                    _this.commentsInfo.splice(index,1);
+                })
+            },deleteSuccess() {
+                const h = this.$createElement;
+
+                this.$notify({
+                    title: '通知',
+                    message: h('i', {style: 'color: teal'}, '您已删除一条评论')
+                });
+            }
+        }, created() {
+            var userCookie = document.cookie;
+            if(userCookie===""){
+                open("login.html","_self");
+            }
+            let str = userCookie.split("^");
+            let value = str[1].split("=");
+            this.userShowName = value[1];
+
+            let _this = this;
+            let usid = str[0].split("=");
+            axios.get("/news/getNews/" + usid[1]).then(function (resp) {
+                _this.newsInfo = resp.data;
+            })
+            axios.get("/comments/getByUser/"+usid[1]).then(function (resp){
+                _this.commentsInfo = resp.data.filter((item) => {
+                    return item.publisher === value[1];
+                })
+            })
+
+        }
+    })
+</script>
+</body>
+</html>

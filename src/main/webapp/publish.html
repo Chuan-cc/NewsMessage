@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" width="100%">
+<head>
+    <meta charset="UTF-8">
+    <title>NewsMessage</title>
+    <link rel="shortcut icon" href="img/icon.ico"/>
+    <link rel="stylesheet" href="css/NavMenu.css">
+    <link rel="stylesheet" href="css/publish.css">
+    <style>
+        .el-header, .el-footer {
+            text-align: center;
+            line-height: 60px;
+        }
+
+        .el-aside {
+            background-color: #D3DCE6;
+            color: #333;
+            text-align: center;
+            line-height: 200px;
+        }
+
+        .el-main {
+            background-color: #E9EEF3;
+            color: #333;
+            /*text-align: center;*/
+            line-height: 33px;
+        }
+
+        body > .el-container {
+            margin-bottom: 40px;
+        }
+
+        .el-container:nth-child(5) .el-aside,
+        .el-container:nth-child(6) .el-aside {
+            line-height: 260px;
+        }
+
+        .el-container:nth-child(7) .el-aside {
+            line-height: 320px;
+        }
+
+        el-menu {
+            height: 75px;
+        }
+    </style>
+</head>
+<body style="margin: 0px">
+
+<div id="publishApp">
+
+    <el-container>
+        <!--        header容器-->
+        <el-header height="75px" style="padding:0px;">
+            <!--            这里是导航栏-->
+            <div id="navMenu" style="z-index: 7">
+                <span id="logo">
+                    <a href="index.html"><img src="img/Logo.png" height="75px"></a>
+                </span>
+                <span style="float: left; height: 75px ; width: 100px;">
+                    <a class="menuItem" href="index.html">首页</a>
+                </span>
+                <!--                搜索框-->
+
+                <span id="glass" onmouseover="glassMover(this)" onmouseout="glassMout(this)">
+                    <img id="searchGlass" src="img/glass.svg">
+                    <input id="search" type="text" placeholder="请输想查询的内容" onfocus="searchOf(this)"
+                           onblur="searchOb(this)">
+                </span>
+                <!--                登录-->
+                <span style="display:flex; float:right; height: 75px ; width: 100px; margin-right: 20px">
+                    <a class="menuItem" id="login" href="newsInfo.html" style="height: 40px">{{userShowName}}</a>
+                    <el-popover
+                            placement="bottom"
+                            title="提示"
+                            width="150"
+                            trigger="hover"
+                            content="双击退出">
+
+                    <button v-on:dblclick="exits"  slot="reference" style="text-decoration: underline;font-size: 12px;position: relative;top:4px;left: 8px;color: black;background-color: rgba(255,255,255,0);outline: none;border: none;height: 13px;width: 30px;padding: 0">退出</button>
+                            </el-popover>
+                </span>
+            </div>
+        </el-header>
+        <el-main style="height: 900px">
+            <div id="publishContainer">
+                <label>标题:<br></label><input id="publishForm" type="text"
+                                                                   v-model="title"></input><br><br>
+                <label>类型:<br></label><select id="select" v-model="type">
+                <option>生活</option>
+                <option>时事</option>
+                <option>游戏</option>
+                <option>音乐</option>
+                <option>农业</option>
+                <option>科技</option>
+            </select><br><br>
+                <label id="contentLabel">内容:<br></label><textarea style="resize:none;height: 500px;width: 800px;outline: none"
+                                                                      v-model="context"></textarea><br><br>
+                <input id="submitNews" type="submit" value="提交" v-on:click="submitNews"></input>
+            </div>
+        </el-main>
+        <el-footer style="background-color: rgb(67, 76, 122);">
+            <span style="font-size: 20px;font-weight: bold;color:white;">NewsMessage</span>
+        </el-footer>
+    </el-container>
+    <!--    回到顶部-->
+    <input type="button" id="backToTop" onclick="scrollToTop()" value="△" style="font-size: 42px;font-weight: bold;
+position: fixed;
+    top:470px;
+    left: 1170px;
+    list-style-type: none;
+    background-color: rgba(142, 147, 192,0.6);
+    backdrop-filter: blur(6px);
+    height: 75px;
+    width: 75px;
+    border: #3a8ee6;
+    border-radius: 100px;">
+</div>
+
+<script src="js/vue.js"></script>
+<script src="element-ui/lib/index.js"></script>
+<link rel="stylesheet" type="text/css" href="element-ui/lib/theme-chalk/index.css"/>
+<script src="js/axios-0.18.0.js"></script>
+
+<!--搜索栏 -->
+<script>
+
+    <!--    回到顶部按钮-->
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    }
+
+    let GLASS = document.getElementById("glass");
+    let SEARCH_GLASS = document.getElementById("searchGlass");
+    let SEARCH = document.getElementById("search");
+
+    //鼠标悬停事件
+    function glassMover(obj) {
+        document.getElementById('search').focus();
+
+        obj.style = "width: 162px;"
+        SEARCH_GLASS.style = "height: 0;\n" +
+            "    z-index: -1;\n";
+
+        SEARCH.style = "width: 150px;\n" +
+            "    z-index: auto;\n" +
+            "    background-color: rgba(255,255,255,0.3);\n" +
+            "    border: 1px solid #cccccc;";
+    }
+
+    function glassMout(obj) {
+        if (SEARCH.onmouseover) {
+            searchOb(obj);
+        }
+    }
+
+
+    //焦点事件
+    function searchOf(obj) {
+        obj.style = "width: 150px;" +
+            "    z-index: auto;" +
+            "    background-color: rgba(255,255,255,0.3);" +
+            "    border: 1px solid #cccccc;"
+        GLASS.style = "width: 162px;";
+        let searchGlassOf = document.getElementById("searchGlass");
+        searchGlassOf.style = "height: 0;" +
+            "    z-index: -1;";
+    }
+
+    function searchOb(obj) {
+        let glassOb = document.getElementById("glass");
+        let searchGlassOb = document.getElementById("searchGlass");
+        obj.style = "width:0px;" +
+            "z-index:-1;" +
+            "background-color:rgba(0,0,0,0);" +
+            "border:0;";
+        searchGlassOb.style = "height:45px;" +
+            "z-index:auto;";
+        glassOb.style = "width: 55px;";
+    }
+</script>
+
+<script>
+    const vm = new Vue({
+        el: "#publishApp",
+        data: {
+
+            title: "",
+            type: "",
+            context: "",
+            userShowName:""
+
+        }, methods: {
+            // submitFile(){
+            //     console.log(this.faceImage)
+            // }
+            submitNews() {
+                if (this.title !== "" && this.type !== "" && this.context !== "") {
+                    //使axios获取this
+                    let _this = this;
+                    //获取cookie
+                    let str = document.cookie;
+                    let arr = str.split("^");
+                    let idValue = arr[0].split("=");
+                    let writerId = idValue[1];
+                    //获取当前时间
+                    let time = new Date();
+                    let nowTime = time.toLocaleString();
+
+                    axios.post("/news", {
+                        "news_id": "0",
+                        "writer_id": writerId,
+                        "title": this.title,
+                        "type": this.type,
+                        "context": this.context,
+                        "publish_date": nowTime
+                    }).then(function (resp) {
+                    })
+                    this.openSuccess()
+                    alert("发布成功，可去主页查看")
+                } else {
+                    this.openFailure()
+                }
+            }, openSuccess() {
+                this.$message({
+                    showClose: true,
+                    message: '发布成功！',
+                    type: 'success'
+                });
+            },
+            openFailure() {
+                this.$message({
+                    showClose: true,
+                    message: '发布失败！信息不全！',
+                    type: 'error'
+                });
+            },exits(){
+                var cookies = document.cookie.split(";");
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookieName = cookies[i].split("=")[0];
+                    document.cookie = cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                }
+                open("login.html","_self")
+            }
+        },created(){
+            let userCookie = document.cookie;
+            if(userCookie===""){
+                open("login.html","_self");
+            }
+            let str = userCookie.split("^");
+            let value = str[1].split("=");
+            this.userShowName = value[1];
+        }
+    })
+</script>
+</body>
+</html>

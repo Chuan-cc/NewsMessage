@@ -1,0 +1,21 @@
+#_iframe{
+    /*border: none;*/
+    height: 553px;
+    width: 700px;
+    position: relative;
+    left: 32px;
+    border: none;
+}
+
+a{
+    text-decoration: none;
+    color: black;
+    font-weight: bolder;
+
+}
+a:hover{
+    color:rgb(255, 93, 61);
+}
+li{
+    list-style-type: none;
+}

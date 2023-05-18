@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" width="100%">
+<head>
+    <meta charset="UTF-8">
+    <title>NewsMessage</title>
+    <link rel="shortcut icon" href="img/icon.ico"/>
+    <link rel="stylesheet" href="css/register.css"/>
+    <style>
+
+        .el-aside {
+            background-color: rgba(211,220,230,0.3);
+            backdrop-filter: blur(5px);
+            color: #333;
+            text-align: center;
+            line-height: 100px;
+        }
+
+        .el-main {
+            /*background-color: #E9EEF3;*/
+            color: #333;
+        }
+
+        body > .el-container {
+            margin-bottom: 40px;
+        }
+
+        .el-container:nth-child(5) .el-aside,
+        .el-container:nth-child(6) .el-aside {
+            line-height: 260px;
+        }
+
+        .el-container:nth-child(7) .el-aside {
+            line-height: 320px;
+        }
+        el-menu{
+            height: 75px;
+        }
+    </style>
+</head>
+<body style="margin: 0" onload="scrollOnMiddle()" onscroll="">
+<img src="img/indexBg.png" style="z-index: -1;position: fixed;width: 100%;height: auto;">
+<div id="app">
+    <el-container>
+<!--        侧边菜单栏-->
+        <el-aside>
+            <img src="img/Logo.png" height="124px" style="border-bottom: 2px solid black; margin-top: 50px;" onclick="logoOnclick()">
+            <li style="border-bottom: 2px solid black;">
+                <a href="register_customer.html" target="_iframe" id="1" onclick="itemOnclick(this)">个人账户注册</a>
+            </li>
+            <li>
+                <a href="register_corporate.html" target="_iframe" id="2" onclick="itemOnclick(this)">发布者账户注册</a>
+            </li>
+        </el-aside>
+        <el-container>
+            <el-main>
+                <iframe id="_iframe" name="_iframe" src="register_customer.html">
+            </iframe></el-main>
+        </el-container>
+    </el-container>
+</div>
+<script src="js/vue.js"></script>
+<script src="element-ui/lib/index.js"></script>
+<link rel="stylesheet" type="text/css" href="element-ui/lib/theme-chalk/index.css"/>
+<script>
+    //点击logo返回登陆页面
+    function logoOnclick(){
+        open("login.html","_self")
+    }
+
+    //菜单点击变色
+    function itemOnclick(obj){
+            let temp1=document.getElementById("1");
+            let temp2=document.getElementById("2");
+            temp1.style.color="#000";
+            temp2.style.color="#000";
+            obj.style.color="rgb(255, 93, 61)";
+    }
+</script>
+
+<script>
+    const vm=new Vue({
+        el:"#app",
+        data:{
+
+        },methods:{
+
+        },created(){
+        }
+    })
+</script>
+</body>
+</html>

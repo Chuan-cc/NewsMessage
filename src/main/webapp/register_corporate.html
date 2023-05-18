@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/register_customer.css">
+</head>
+<body>
+<div id="corporateApp">
+    <h2>我们提供风景</h2><br>
+
+
+        <label>单位名称：</label><input v-on:blur="companyNameBlur" v-model="companyName" :style="{ border: companyNameBorderStyle }" class="registerText" type="text" style="position: relative;left:14px;transition: 0.5s;"></input><label v-model="warningCompanyName"
+                                                                                                                                                                                               style="font-size: 10px;color:orangered;position: relative;left:38px;transition: 0.5s">{{warningCompanyName}}</label><br><br>
+    <label>姓名/笔名：</label><input v-on:blur="writeNameBlur" v-model="writeName" :style="{ border: nameBorderStyle }"class="registerText" type="text" style="position: relative;left:7px;transition: 0.5s;"></input><label v-model="warningName"
+                                                                                                                                                                             style="font-size: 10px;color:orangered;position: relative;left:30px;transition: 0.5s">{{warningName}}</label><br><br>
+        <label>手机号码：</label><input v-on:blur="phoneNumberBlur" v-model="phoneNumber" :style="{ border: phoneBorderStyle }"class="registerText" type="text" style="position: relative;left:14px;transition: 0.5s;"></input><label v-model="warningPhone"
+                                                                                                                                                                                        style="font-size: 10px;color:orangered;position: relative;left:36px;transition: 0.5s">{{warningPhone}}</label><br><br>
+        <label>密码：</label><input v-on:blur="passWordBlur" v-model="passWord" class="registerText" :style="{ border: passwordBorderStyle }"type="password" style="position: relative;left:48px;transition: 0.5s;"></input><label v-model="warningPassword"
+                                                                                                                                                                                        style="font-size: 10px;color:orangered;position: relative;left:70px;transition: 0.5s">{{warningPassword}}</label><br><br>
+        <label>确认密码：</label><input v-model="passwordChecked" class="registerText" type="password" style="position: relative;left:14px;"></input><br><br>
+<!--        <label>在职工作证明(.jpg格式): </label><input type="file" accept=".jpg" style="margin-left: 30px"></input><br><br>-->
+        <input class="formButton" type="submit" value="注册" v-on:click="registerCorporate"></input>
+        <input class="formButton" type="button" value="重置" v-on:click="rest"></input>
+
+
+</div>
+<script src="js/vue.js"></script>
+<script src="element-ui/lib/index.js"></script>
+<link rel="stylesheet" type="text/css" href="element-ui/lib/theme-chalk/index.css"/>
+<script src="js/axios-0.18.0.js"></script>
+<script>
+    const vm1=new Vue({
+        el:"#corporateApp",
+        data:{
+            check:false,
+            companyName:"",
+            writeName:"",
+            phoneNumber:"",
+            passWord:"",
+            passwordChecked:"",
+            companyNameBorderStyle:"",
+            nameBorderStyle:"",
+            phoneBorderStyle:"",
+            passwordBorderStyle:"",
+            warningCompanyName:"",
+            warningName:"",
+            warningPassword:"",
+            warningPhone:"",
+        },methods:{
+            companyNameBlur() {
+                if (this.companyName === "") {
+                    this.companyNameBorderStyle = "2px solid rgba(255,0,0,0.4)";
+                    this.warningCompanyName = "单位名不能为空！"
+                } else {
+                    this.companyNameBorderStyle = "2px solid rgb(235,235,235)";
+                    this.warningCompanyName = ""
+                }
+            },
+            writeNameBlur() {
+                if (this.writeName === "") {
+                    this.nameBorderStyle = "2px solid rgba(255,0,0,0.4)";
+                    this.warningName = "姓名/笔名不能为空！"
+                } else {
+                    this.nameBorderStyle = "2px solid rgb(235,235,235)";
+                    this.warningName = ""
+                }
+            },
+            passWordBlur() {
+                if (this.passWord === "") {
+                    this.passwordBorderStyle = "2px solid rgba(255,0,0,0.4)";
+                    this.warningPassword = "密码不能为空！"
+                } else {
+                    this.passwordBorderStyle = "2px solid rgb(235,235,235)";
+                    this.warningPassword = ""
+                    if(this.passWord.length<6){
+                        alert("请输入至少六位密码！")
+                        this.passwordBorderStyle = "2px solid rgba(255,0,0,0.4)";
+                        this.check=true;
+                    }else {
+                        this.passwordBorderStyle = "2px solid rgb(235,235,235)";
+                        this.check=false;
+                    }
+                }
+            },
+            phoneNumberBlur() {
+                // 匹配手机号正则表达式
+                let reg_tel = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/;
+                if (this.phoneNumber === "") {
+                    this.phoneBorderStyle = "2px solid rgba(255,0,0,0.4)";
+                    this.warningPhone = "手机号码不能为空！"
+                } else {
+                    this.phoneBorderStyle = "2px solid rgb(235,235,235)";
+                    this.warningPhone = ""
+                    if (!reg_tel.test(this.phoneNumber)){
+                        alert("手机号码格式不正确！")
+                        this.phoneBorderStyle = "2px solid rgba(255,0,0,0.4)";
+                        this.check=true;
+                    }else {
+                        this.phoneBorderStyle = "2px solid rgb(235,235,235)"
+                        this.check=false;
+                    }
+                }
+            },
+            registerCorporate() {
+                if(this.companyName!==""&&this.writeName!==""&&this.phoneNumber!==""&&this.passWord!=="") {
+                    if (!this.check) {
+                    if (this.passWord === this.passwordChecked) {
+                        axios.post("/corporate", {
+                            "company_name": this.companyName,
+                            "writename": this.writeName,
+                            "phone_number": this.phoneNumber,
+                            "pswd": this.passWord
+                        }).then(function (resp) {
+                            alert("请记住您的id！！！ " + resp.data.id);
+                            window.parent.location.href = "login.html";
+                        })
+                        this.openSuccess();
+                    } else {
+                        this.openFailure();
+                    }
+                }else{
+                        this.openFailure1();
+                    }
+                }else{
+                    this.openFailure1();
+                }
+            },
+            openSuccess() {
+                this.$message({
+                    showClose: true,
+                    message: '恭喜你，注册成功！',
+                    type: 'success'
+                });
+            },
+            openFailure() {
+                this.$message({
+                    showClose: true,
+                    message: '注册失败！两次密码输入不一致！',
+                    type: 'error'
+                });
+            },
+            openFailure1() {
+                this.$message({
+                    showClose: true,
+                    message: '注册失败！信息不全/不合规！',
+                    type: 'error'
+                });
+            },rest(){
+                this.companyName="";
+                this.writeName="";
+                this.phoneNumber="";
+                this.passWord="";
+                this.passwordChecked=""
+            }
+        }
+    })
+</script>
+
+
+</body>
+</html>

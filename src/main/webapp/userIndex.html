@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en" width="100%">
+<head>
+    <meta charset="UTF-8">
+    <title>NewsMessage</title>
+    <link rel="shortcut icon" href="img/icon.ico"/>
+    <link rel="stylesheet" href="css/NavMenu.css">
+    <style>
+        .el-header, .el-footer {
+            text-align: center;
+            line-height: 60px;
+        }
+
+        .el-aside {
+            background-color: #D3DCE6;
+            color: #333;
+            text-align: center;
+            line-height: 200px;
+        }
+
+        .el-main {
+            background-color: #E9EEF3;
+            color: #333;
+            text-align: center;
+            line-height: 160px;
+        }
+
+        body > .el-container {
+            margin-bottom: 40px;
+        }
+
+        .el-container:nth-child(5) .el-aside,
+        .el-container:nth-child(6) .el-aside {
+            line-height: 260px;
+        }
+
+        .el-container:nth-child(7) .el-aside {
+            line-height: 320px;
+        }
+
+        el-menu {
+            height: 75px;
+        }
+    </style>
+</head>
+<body style="margin: 0px">
+<img src="img/indexBg.png" style="z-index: -1;position: fixed;width: 100%;height: auto;">
+<div id="userIndex">
+
+    <el-container>
+        <!--        header容器-->
+        <el-header height="75px" style="padding:0px;">
+            <!--            这里是导航栏-->
+            <div id="navMenu">
+                <span id="logo">
+                    <img src="img/Logo.png" height="75px" v-on:click="show">
+                </span>
+                <span style="float: left; height: 75px ; width: 100px;">
+                    <a class="menuItem" v-on:click="searchLife" href="#">生活</a>
+                </span>
+                <span style="float: left; height: 75px ; width: 100px;">
+                    <a class="menuItem" v-on:click="searchEvent" href="#">时事</a>
+                </span>
+                <span style="float: left; height: 75px ; width: 100px;">
+                    <a class="menuItem" v-on:click="searchGame" href="#">游戏</a>
+                </span>
+                <span style="float: left; height: 75px ; width: 100px;">
+                    <a class="menuItem" v-on:click="searchMusic" href="#">音乐</a>
+                </span>
+                <span style="float: left; height: 75px ; width: 100px;">
+                    <a class="menuItem" v-on:click="searchAgriculture" href="#">农业</a>
+                </span>
+                <span style="float: left; height: 75px ; width: 100px;">
+                    <a class="menuItem" v-on:click="searchTech" href="#">科技</a>
+                </span>
+                <span style="float: left; height: 75px ; width: 100px;">
+                    <a class="menuItem" href="hot.html">热门</a>
+                </span>
+                <!--                搜索框-->
+
+                <span id="glass" onmouseover="glassMover(this)" onmouseout="glassMout(this)">
+                    <img id="searchGlass" src="img/glass.svg">
+                    <input id="search" type="text" placeholder="请输入想查询的内容" onfocus="searchOf(this)"
+                           onblur="searchOb(this)" v-on:change="searchNews" v-model="searchContent"></input>
+                </span>
+                <!--                登录-->
+                <span style="display:flex; float:right; height: 75px ; width: 100px; margin-right: 20px">
+                    <a class="menuItem" id="login" href="userInfo.html" style="height: 40px">{{userShowName}}</a>
+                    <el-popover
+                            placement="bottom"
+                            title="提示"
+                            width="150"
+                            trigger="hover"
+                            content="双击退出">
+
+                    <button v-on:dblclick="exits" slot="reference"
+                            style="text-decoration: underline;font-size: 12px;position: relative;top:4px;left: 8px;color: black;background-color: rgba(255,255,255,0);outline: none;border: none;height: 13px;width: 30px;padding: 0">退出</button>
+                            </el-popover>
+                </span>
+            </div>
+        </el-header>
+        <template v-for="(new1,index) in news">
+            <span>
+            <el-button v-on:click="drawerClick(index)" type="primary"
+                       style="margin-left: 100px;margin-right: 20px;margin-top:40px;height: 50px;background-color:rgba(147,136,190);width: 71%;
+                       border: 1px solid rgb(116, 120, 176)">
+                {{new1.title}}
+            </el-button>
+            <el-button style="height: 50px;" v-on:click="comment(index)">查看评论</el-button></span>
+        </template>
+
+        <el-drawer
+                v-bind:title="drawerTitle"
+                :visible.sync="drawer"
+                :direction="direction"
+                :before-close="handleClose"
+                style="backdrop-filter: blur(7px);"
+                size="50%">
+
+            <span style="margin-left: 40px">{{context}}</span><br><br>
+            <input type="button" value="喜欢" style="height:40px;width:60px;margin-left: 40px"
+                   v-on:click="likedClick"></input>
+        </el-drawer>
+        <el-dialog
+                title="评论区"
+                :visible.sync="dialogVisible"
+                width="60%"
+                height="50%"
+                style="background-color: rgb(216, 183, 216);"
+                :before-close="handleClose">
+            <li style="margin-bottom: 10px" v-if="JSON.stringify(comments)==='[]'">此新闻还没有人评论，请在这里留言吧</li>
+            <template v-for="comment in comments">
+                <li style="margin-bottom: 10px" >{{comment.publisher}}在&nbsp;&nbsp;&nbsp;&nbsp;{{comment.time}}&nbsp;&nbsp;&nbsp;&nbsp;说：&nbsp;&nbsp;{{comment.com}}</li>
+            </template>
+            <br>
+            <span slot="footer" class="dialog-footer">
+            <input type="text" style="outline: none;height: 30px;width: 250px;float: left;" v-model="commented"></input>
+                <button style="height:36px;width:55px;float: left;position: relative;left:20px"
+                        v-on:click="publish">评 论</button>
+    <el-button type="primary" @click="dialogClose">关 闭</el-button>
+                  </span>
+        </el-dialog>
+        <el-footer style="background-color: rgb(67, 76, 122); margin-top: 50px;">
+            <span style="font-size: 20px;font-weight: bold;color:white;">NewsMessage</span>
+        </el-footer>
+    </el-container>
+    <!--    回到顶部-->
+    <input type="button" id="backToTop" onclick="scrollToTop()" value="△" style="font-size: 42px;font-weight: bold;
+position: fixed;
+    top:470px;
+    left: 1170px;
+    list-style-type: none;
+    background-color: rgba(142, 147, 192,0.6);
+    backdrop-filter: blur(6px);
+    height: 75px;
+    width: 75px;
+    border: #3a8ee6;
+    border-radius: 100px;">
+</div>
+
+<script src="js/vue.js"></script>
+<script src="element-ui/lib/index.js"></script>
+<link rel="stylesheet" type="text/css" href="element-ui/lib/theme-chalk/index.css"/>
+<script src="js/axios-0.18.0.js"></script>
+<!--搜索栏 -->
+<script>
+
+    <!--    回到顶部按钮-->
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    }
+
+    let GLASS = document.getElementById("glass");
+    let SEARCH_GLASS = document.getElementById("searchGlass");
+    let SEARCH = document.getElementById("search");
+
+    //鼠标悬停事件
+    function glassMover(obj) {
+        document.getElementById('search').focus();
+
+        obj.style = "width: 162px;"
+        SEARCH_GLASS.style = "height: 0;\n" +
+            "    z-index: -1;\n";
+
+        SEARCH.style = "width: 150px;\n" +
+            "    z-index: auto;\n" +
+            "    background-color: rgba(255,255,255,0.3);\n" +
+            "    border: 1px solid #cccccc;";
+    }
+
+    function glassMout(obj) {
+        if (SEARCH.onmouseover) {
+            searchOb(obj);
+        }
+    }
+
+
+    //焦点事件
+    function searchOf(obj) {
+        obj.style = "width: 150px;" +
+            "    z-index: auto;" +
+            "    background-color: rgba(255,255,255,0.3);" +
+            "    border: 1px solid #cccccc;"
+        GLASS.style = "width: 162px;";
+        let searchGlassOf = document.getElementById("searchGlass");
+        searchGlassOf.style = "height: 0;" +
+            "    z-index: -1;";
+    }
+
+    function searchOb(obj) {
+        let glassOb = document.getElementById("glass");
+        let searchGlassOb = document.getElementById("searchGlass");
+        obj.style = "width:0px;" +
+            "z-index:-1;" +
+            "background-color:rgba(0,0,0,0);" +
+            "border:0;";
+        searchGlassOb.style = "height:45px;" +
+            "z-index:auto;";
+        glassOb.style = "width: 55px;";
+    }
+</script>
+
+<script>
+    const vm = new Vue({
+        el: "#userIndex",
+        data: {
+            news: [],
+            userShowName: "登录",
+            drawer: false,
+            direction: 'btt',
+            context: "",
+            drawerTitle: "",
+            tempTitle: "",
+            tempDate: "",
+            write_name: "",
+            company_name: "",
+            publish_date: "",
+            likeButtonStyle: "",
+            likeId: "",
+            searchContent: "",
+            dialogVisible:false,
+            comments:[],
+            news_title:"",
+            newsId:""
+        }, methods: {
+            show() {
+                let self = this;
+                axios.get("/news").then(function (resp) {
+                    self.news = resp.data;
+                })
+            },
+            // 抽屉点击事件
+            drawerClick(index) {
+                this.drawer = true;
+                let _this = this;
+                axios.get("/corporate/" + this.news[index].writer_id).then(function (resp) {
+                    _this.company_name = resp.data.company_name;
+                    _this.write_name = resp.data.writename;
+                    _this.context = _this.news[index].context;
+                    _this.publish_date = _this.news[index].publish_date;
+                    _this.likeId = _this.news[index].news_id;
+                    _this.drawerTitle = _this.news[index].title + "\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0" + _this.company_name + "\xa0\xa0\xa0\xa0\xa0" + _this.write_name + "\xa0\xa0\xa0\xa0\xa0" + _this.news[index].publish_date + "\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0" + _this.news[index].liked + "喜欢";
+                    _this.tempTitle = _this.news[index].title;
+                    _this.tempDate = _this.news[index].publish_date;
+                });
+
+                // this.count=this.news[index].liked;
+            },
+            likedClick() {
+                let _this = this;
+                axios.get("/news/addLiked/" + this.likeId).then(function (resp) {
+                    // _this.count=resp.data;
+                    // _this.drawerTitle=resp.data;
+                    _this.drawerTitle = _this.tempTitle + "\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0" + _this.company_name + "\xa0\xa0\xa0\xa0\xa0" + _this.write_name + "\xa0\xa0\xa0\xa0\xa0" + _this.tempDate + "\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0" + resp.data + "喜欢";
+                    _this.open1();
+                });
+
+            }, searchNews() {
+                let _this = this;
+                if (this.searchContent !== "") {
+                    // 类型查询
+                    if (this.searchContent === "生活" || this.searchContent === "时事" || this.searchContent === "游戏" || this.searchContent === "音乐" || this.searchContent === "农业" || this.searchContent === "科技") {
+                        axios.get("/news/search/" + this.searchContent).then(function (resp) {
+                            _this.news = resp.data;
+                            _this.openNoticeSuccess();
+                            this.$forceUpdate();
+                        })
+                    }
+                    // 标题及内容的模糊查询
+                    else {
+                        axios.get("/news/fuzzyQuery/" + this.searchContent).then(function (resp) {
+                            _this.news = resp.data;
+                            _this.openNoticeSuccess();
+                            this.$forceUpdate();
+                        })
+                    }
+                } else {
+                    this.show();
+                }
+
+            }, open1() {
+                this.$message('点赞成功');
+            }, openNoticeSuccess() {
+                const h = this.$createElement;
+
+                this.$notify({
+                    title: '通知',
+                    message: h('i', {style: 'color: teal'}, '查询成功')
+                });
+            }, exits() {
+                var cookies = document.cookie.split(";");
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookieName = cookies[i].split("=")[0];
+                    document.cookie = cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                }
+                open("login.html", "_self")
+            },
+            searchLife() {
+                let _this = this;
+                axios.get("/news/search/生活").then(function (resp) {
+                    _this.news = resp.data;
+                    this.$forceUpdate();
+                })
+            }, searchEvent() {
+                let _this = this;
+                axios.get("/news/search/时事").then(function (resp) {
+                    _this.news = resp.data;
+                    this.$forceUpdate();
+                })
+            }, searchGame() {
+                let _this = this;
+                axios.get("/news/search/游戏").then(function (resp) {
+                    _this.news = resp.data;
+                    this.$forceUpdate();
+                })
+            }, searchMusic() {
+                let _this = this;
+                axios.get("/news/search/音乐").then(function (resp) {
+                    _this.news = resp.data;
+                    this.$forceUpdate();
+                })
+            }, searchAgriculture() {
+                let _this = this;
+                axios.get("/news/search/农业").then(function (resp) {
+                    _this.news = resp.data;
+                    this.$forceUpdate();
+                })
+            }, searchTech() {
+                let _this = this;
+                axios.get("/news/search/科技").then(function (resp) {
+                    _this.news = resp.data;
+                    this.$forceUpdate();
+                })
+            },comment(index) {
+                let _this = this;
+                axios.get("/comments/" + this.news[index].news_id).then(function (resp) {
+                    _this.comments = resp.data;
+                    _this.dialogVisible = true;
+                    _this.newsId = _this.news[index].news_id;
+                    _this.index = index;
+                })
+                this.news_title=this.news[index].title;
+            }, publish() {
+                if (this.commented !== "") {
+                    let _this = this;
+                    let userCookie = document.cookie;
+                    let str = userCookie.split("^");
+                    let value = str[1].split("=");
+                    let userName = value[1];
+                    let idValue=str[0].split("=");
+                    let id=idValue[1];
+                    let time = new Date();
+                    // let nowTime = time.toLocaleString();
+                    let year = time.getFullYear();
+                    let month = time.getMonth();
+                    let date = time.getDate();
+                    // let hour = time.getHours();
+                    // let minutes = time.getMinutes();
+                    // let second = time.getSeconds();
+                    let localTime=time.toLocaleTimeString();
+                    axios.post("/comments", {
+                        "id": 0,
+                        "news_id": _this.newsId,
+                        "news_title": _this.news_title,
+                        "com": _this.commented,
+                        "publisher_id":id,
+                        "publisher": userName,
+                        "time": year + "年" + month + "月" + date + "日" + "\xa0\xa0" + localTime
+                    }).then(function (resp) {
+                        _this.publishSuccess();
+                        _this.comment(_this.index);
+                    })
+                }else {
+                    this.publishFailure();
+                }
+            }, publishSuccess() {
+                this.$message('评论成功');
+            }, publishFailure() {
+                this.$message('请输入内容进行评论吧');
+            },dialogClose(){
+                this.commented="";
+                this.dialogVisible=false;
+            }
+        }, created() {
+            this.show()
+            let userCookie = document.cookie;
+            if (userCookie === "") {
+                open("login.html", "_self");
+            }
+            let str = userCookie.split("^");
+            let value = str[1].split("=");
+            this.userShowName = value[1];
+        }
+    })
+</script>
+</body>
+</html>

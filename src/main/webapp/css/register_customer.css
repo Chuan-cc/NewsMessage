@@ -1,0 +1,58 @@
+form{
+    font-size: 17px;
+    color: rgba(0,0,0,0.6);
+    font-weight: bold;
+}
+
+#birthday{
+    position: relative;
+    left: 44px;
+    background-color: rgba(255,255,255,0.4);
+    outline: none;
+    width: 20%;
+    border-radius: 2px;
+    border: none;
+}
+
+#customerGender{
+    position: relative;
+    left: 44px;
+    background-color: rgba(255,255,255,0.4);
+    outline: none;
+    border: none;
+    width: 20%;
+    border-radius: 2px;
+
+}
+
+/*文本框样式*/
+.registerText{
+    border: 2px solid rgba(204,204,204,0.4);
+    background-color: rgba(255,255,255,0.4);
+    backdrop-filter: blur(6px);
+    border-radius: 3px;
+    height: 35px;
+    width: 39.5%;
+    outline: none;
+}
+
+.el-input__inner{
+    background-color: black;
+}
+
+
+
+.formButton{
+    width: 20%;
+    height: 35px;
+    margin-left: 30px;
+    background-color: rgba(255,255,255,0.4);
+    backdrop-filter: blur(6px);
+    border:1px solid rgba(204,204,204,0.2);
+    transition: border 0.5s;
+}
+.formButton:hover{
+    border:1px solid black;
+    background-color: rgba(255,255,255,0.7);
+
+}

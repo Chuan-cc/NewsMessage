@@ -1,0 +1,37 @@
+#publishForm{
+    height:30px;
+    width: 200px;
+    outline: none;
+    border: 1px solid gray;
+}
+
+#select{
+    height:34px;
+    width: 205px;
+    outline: none;
+    border: 1px solid gray;
+}
+
+
+#publishContainer{
+    position: relative;
+    left:225px;
+}
+
+#submitNews{
+    border:1px solid rgb(204,204,204);
+    background-color: rgb(255,255,255);
+    height: 38px;
+    width: 110px;
+    transition: border 0.5s;
+    position: relative;
+    left:27%
+}
+
+#submitNews:hover{
+    border:1px solid black;
+}
+
+#submitNews:active{
+    background-color: rgb(204,204,204);
+}
